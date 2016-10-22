@@ -1,7 +1,14 @@
 
-const async = require('async');
-const taskRunner = require('./lib/taskrunner');
-const logStream = require('./lib/logstream');
+var async = require('async');
+var taskRunner = require('./lib/taskrunner');
+var logStream = require('./lib/logstream');
+
+var AWS = require('aws-sdk');
+var region = process.env.AWS_DEFAULT_REGION || 'us-east-1';
+
+AWS.config.update({
+  region: region
+});
 
 // Generate a random string we will use to know when
 // the log stream is finished.
@@ -40,7 +47,7 @@ module.exports = function(options, cb) {
         endOfStreamIdentifier: endOfStreamIdentifier
       }
 
-      taskRunner(params, cb);
+      taskRunner.run(params, cb);
     }
   ], function(err, taskDefinition) {
     if (err) throw err;
