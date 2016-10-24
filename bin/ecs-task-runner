@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+var async = require('async');
+var ecsTaskRunner = require('../');
+
+var argv = require('yargs')
+  .demand([ 'cluster', 'task-definition', 'container-name', 'cmd' ])
+  .argv;
+
+var options = {
+  clusterArn: argv.cluster,
+  taskDefinitionArn: argv.taskDefinition,
+  containerName: argv.containerName,
+  cmd: argv.cmd
+};
+
+ecsTaskRunner(options, function(err, stream) {
+  if (err) throw err;
+
+  stream.pipe(process.stdout);
+
+  stream.on('error', (err) => {
+    throw err;
+  });
+});

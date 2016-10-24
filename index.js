@@ -1,65 +1,79 @@
 
 var async = require('async');
-var taskRunner = require('./lib/taskrunner');
-var logStream = require('./lib/logstream');
-
+var randomstring = require('randomstring');
+var _ = require('lodash');
 var AWS = require('aws-sdk');
-var region = process.env.AWS_DEFAULT_REGION || 'us-east-1';
+var combiner = require('stream-combiner');
 
-AWS.config.update({
-  region: region
-});
-
-// Generate a random string we will use to know when
-// the log stream is finished.
-const endOfStreamIdentifier = randomstring.generate({
-  length: 16,
-  charset: 'alphabetic'
-});
-
-var containerDefinition = null;
-var loggingDriver = null;
-var logGroup = null;
+var taskRunner = require('./lib/taskrunner');
+var LogStream = require('./lib/log-stream');
+var FormatStream = require('./lib/format-transform-stream');
 
 module.exports = function(options, cb) {
+  AWS.config.update({
+    region: process.env.AWS_DEFAULT_REGION || 'us-east-1'
+  });
+
+  var containerDefinition = null;
+  var loggingDriver = null;
+  var logOptions = null;
+
+  // Generate a random string we will use to know when
+  // the log stream is finished.
+  const endOfStreamIdentifier = randomstring.generate({
+    length: 16,
+    charset: 'alphabetic'
+  });
+
   async.waterfall([
     function(next) {
-      ecs.describeTaskDefinition({ taskDefinition: options.taskDefinition }, function(err, taskDefinition) {
-        containerDefinition = _.find(taskDefinition.containerDefinitions, { 'name': options.containerName });
+      var ecs = new AWS.ECS();
+      ecs.describeTaskDefinition({ taskDefinition: options.taskDefinitionArn }, function(err, result) {
+        if (err) return next(err);
+
+        if (!result.taskDefinition || !result.taskDefinition.taskDefinitionArn) {
+          return next(new Error(`Could not find taskDefinition with the arn "${options.taskDefinitionArn}"`));
+        }
+
+        containerDefinition = _.find(result.taskDefinition.containerDefinitions, { 'name': options.containerName });
 
         if (!containerDefinition) {
-          return cb(new Error(`Could not find container by the name "${options.containerName}" in task definition`));
+          return next(new Error(`Could not find container by the name "${options.containerName}" in task definition`));
         }
 
         loggingDriver = containerDefinition['logConfiguration']['logDriver'];
         if (loggingDriver != 'awslogs') {
-          return cb(new Error('Logging dirver is awslogs. Can not stream logs unless logging driver is awslogs'));
+          return next(new Error('Logging dirver is awslogs. Can not stream logs unless logging driver is awslogs'));
         }
 
         logOptions = containerDefinition['logConfiguration']['options'];
-        cb();
+        next();
       });
     },
-    function(taskDefinition, next) {
+    function(next) {
       var params = {
         clusterArn: options.clusterArn,
         taskDefinitionArn: options.taskDefinitionArn,
+        containerName: options.containerName,
+        cmd: options.cmd,
         endOfStreamIdentifier: endOfStreamIdentifier
       }
 
-      taskRunner.run(params, cb);
+      taskRunner.run(params, next);
     }
   ], function(err, taskDefinition) {
-    if (err) throw err;
+    if (err) return cb(err);
 
-    var stream = new logStream({
-      containerName: options.containerName,
+    var taskArn = taskDefinition.tasks[0].taskArn;
+    var taskId = taskArn.substring(taskArn.lastIndexOf('/')+1);
+
+    var formatter = new FormatStream();
+    var logs = new LogStream({
       logGroup: logOptions['awslogs-group'],
-      logStream: `ecs/${argv.containerName}/${taskId}`,
-      taskArn: 'xxx',
+      logStream: `ecs/${options.containerName}/${taskId}`,
       endOfStreamIdentifier: endOfStreamIdentifier
     });
 
-    cb(null, stream);
+    cb(null, combiner(logs, formatter));
   });
 }
