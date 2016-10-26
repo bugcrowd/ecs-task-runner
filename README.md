@@ -6,7 +6,8 @@ Run a task on ECS and receive output by sending task logs to Cloudwatch Logs and
 Installation
 ------------
 
-`npm install ecs-task-runner`
+For cli usage: `npm install -g ecs-task-runner`
+As a module: `npm install ecs-task-runner --save`
 
 Usage
 -----
@@ -14,8 +15,6 @@ Usage
 ECS Task Runner requires an already existing ECS cluster and Task Definition. The Task Definition must send it's logs to AWS Cloudwatch and the ECS hosts will need an IAM role that has permission to do that.
 
 ### CLI Tool
-
-To use the cli tool you might want to install ECS Task Runner so the executable is in your path (`npm install -g ecs-task-runner`). Below is the command usage
 
 ```
 Options:
@@ -37,7 +36,7 @@ The name of your container in your Task Definition that you want to run this com
 #### cmd
 The command you want to run
 
-### Module
+### Example Module Usage
 
 ```
 var ecsTaskRunner = require('ecs-task-runner');
