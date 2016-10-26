@@ -3,11 +3,24 @@
   "version": "0.1.0",
   "description": "Run a task on ecs and stream logs from Cloudwatch Logs to the console",
   "main": "index.js",
+  "bin": {
+    "ecs-task-runner": "./bin/ecs-task-runner"
+  },
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --recursive"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bugcrowd/ecs-task-runner"
+  },
+  "keywords": [
+    "ecs",
+    "aws",
+    "task definition",
+    "run task"
+  ],
   "author": "Coen Hyde",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "async": "^2.1.2",
     "aws-sdk": "^2.6.10",
@@ -24,5 +37,6 @@
     "expect.js": "^0.3.1",
     "mocha": "^3.1.2",
     "sinon": "^1.17.6"
-  }
+  },
+  "preferGlobal": true
 }
