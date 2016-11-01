@@ -70,10 +70,13 @@ module.exports = function(options, cb) {
     var formatter = new FormatStream();
     var logs = new LogStream({
       logGroup: logOptions['awslogs-group'],
-      logStream: `ecs/${options.containerName}/${taskId}`,
+      logStream: `${logOptions['awslogs-stream-prefix']}/${options.containerName}/${taskId}`,
       endOfStreamIdentifier: endOfStreamIdentifier
     });
 
-    cb(null, combiner(logs, formatter));
+    var stream = combiner(logs, formatter);
+    stream.logStream = logs;
+
+    cb(null, stream);
   });
 }

@@ -17,9 +17,13 @@ var options = {
 ecsTaskRunner(options, function(err, stream) {
   if (err) throw err;
 
-  stream.pipe(process.stdout);
-
   stream.on('error', (err) => {
     throw err;
   });
+
+  stream.on('end', () => {
+    process.exit(stream.logStream.exitCode);
+  });
+
+  stream.pipe(process.stdout);
 });

@@ -17,7 +17,7 @@ describe('LogStream', function() {
   var staticLogs = [
     { timestamp: 1477346285562, message: 'Weee logs' },
     { timestamp: 1477346285563, message: 'more logs' },
-    { timestamp: 1477346285565, message: new Buffer(options.endOfStreamIdentifier).toString('base64') }
+    { timestamp: 1477346285565, message: `TASK FINISHED: ${new Buffer(options.endOfStreamIdentifier).toString('base64')}, EXITCODE: 44` }
   ];
 
   it('should fetch logs from AWS Cloudwatch ', function(done) {
@@ -44,6 +44,7 @@ describe('LogStream', function() {
 
     stream.on('end', () => {
       expect(logsCollection).to.eql(staticLogs);
+      expect(stream.exitCode).to.eql(44);
       done();
     });
   });
