@@ -22,6 +22,15 @@ ecsTaskRunner(options, function(err, stream) {
   });
 
   stream.on('end', () => {
+    if (stream.logStream.exitCode > 0) {
+      console.log("");
+      console.log("ECS task exited with a non-zero exit status".red);
+    }
+    else {
+      console.log("");
+      console.log("ECS task exited successfuly".green);
+    }
+
     process.exit(stream.logStream.exitCode);
   });
 
