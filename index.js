@@ -73,7 +73,7 @@ module.exports = function(options, cb) {
       logStream: `${logOptions['awslogs-stream-prefix']}/${options.containerName}/${taskId}`,
       endOfStreamIdentifier: endOfStreamIdentifier
     });
-
+    
     var stream = combiner(logs, formatter);
     stream.logStream = logs;
 
