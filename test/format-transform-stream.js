@@ -11,7 +11,7 @@ describe('FormatTransformStream', function() {
     stream.write({ timestamp: 1477346285562, message: 'Weee logs' });
 
     stream.on('data', (data) => {
-      expect(data).to.eql("\u001b[90m2016-10-24 14:58:05 -0700\u001b[39m Weee logs\n");
+      expect(data).to.eql("Weee logs\n");
       done();
     });
   });
