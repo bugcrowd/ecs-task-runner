@@ -1,6 +1,6 @@
 {
   "name": "ecs-task-runner",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Run a task on ecs and stream logs from Cloudwatch Logs to the console",
   "main": "index.js",
   "bin": {
