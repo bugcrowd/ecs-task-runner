@@ -28,7 +28,7 @@ ecsTaskRunner(options, function(err, stream) {
     }
     else {
       console.log("");
-      console.log("ECS task exited successfuly".green);
+      console.log("ECS task exited successfully".green);
     }
 
     process.exit(stream.logStream.exitCode);
