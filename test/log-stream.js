@@ -1,33 +1,32 @@
 'use strict'
 
-var expect = require('expect.js');
-var AWS = require('aws-sdk-mock');
-
-var LogsStream = require('../lib/log-stream');
+const AWS        = require('aws-sdk-mock'),
+      expect     = require('expect.js'),
+      LogsStream = require('../lib/log-stream');
 
 describe('LogStream', function() {
   this.timeout(5000);
 
-  var options = {
+  const options = {
     logGroup: 'yee',
     logStream: `yo`,
     endOfStreamIdentifier: 'ohiv09vaepnjpasv'
   }
 
-  var staticLogs = [
+  const staticLogs = [
     { timestamp: 1477346285562, message: 'Weee logs' },
     { timestamp: 1477346285563, message: 'more logs' },
     { timestamp: 1477346285565, message: `TASK FINISHED: ${new Buffer(options.endOfStreamIdentifier).toString('base64')}, EXITCODE: 44` }
   ];
 
   it('should fetch logs from AWS Cloudwatch ', function(done) {
-    var fetch_count = 0;
+    let fetch_count = 0;
 
     AWS.mock('CloudWatchLogs', 'getLogEvents', function (params, cb){
       expect(params.logGroupName).to.equal(options.logGroup);
       expect(params.logStreamName).to.equal(options.logStream);
 
-      var res = {
+      const res = {
         events: [ staticLogs[fetch_count] ]
       };
 
@@ -35,7 +34,7 @@ describe('LogStream', function() {
       setTimeout(() => cb(null, res), 200);
     });
 
-    var stream = new LogsStream(options);
+    const stream = new LogsStream(options);
     var logsCollection = [];
 
     stream.on('data', (data) => {

@@ -53,10 +53,12 @@ module.exports = function(options, cb) {
     function(next) {
       var params = {
         clusterArn: options.clusterArn,
-        taskDefinitionArn: options.taskDefinitionArn,
-        containerName: options.containerName,
         cmd: options.cmd,
-        endOfStreamIdentifier: endOfStreamIdentifier
+        containerName: options.containerName,
+        endOfStreamIdentifier: endOfStreamIdentifier,
+        env: options.env,
+        startedBy: options.startedBy,
+        taskDefinitionArn: options.taskDefinitionArn
       }
 
       taskRunner.run(params, next);
