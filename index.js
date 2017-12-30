@@ -1,22 +1,22 @@
+'use strict';
 
-var async = require('async');
-var randomstring = require('randomstring');
-var _ = require('lodash');
-var AWS = require('aws-sdk');
-var combiner = require('stream-combiner');
-
-var taskRunner = require('./lib/taskrunner');
-var LogStream = require('./lib/log-stream');
-var FormatStream = require('./lib/format-transform-stream');
+const async        = require('async'),
+      randomstring = require('randomstring'),
+      _            = require('lodash'),
+      AWS          = require('aws-sdk'),
+      combiner     = require('stream-combiner'),
+      taskRunner   = require('./lib/taskrunner'),
+      LogStream    = require('./lib/log-stream'),
+      FormatStream = require('./lib/format-transform-stream');
 
 module.exports = function(options, cb) {
   AWS.config.update({
-    region: process.env.AWS_DEFAULT_REGION || 'us-east-1'
+    region: options.region || process.env.AWS_DEFAULT_REGION || 'us-east-1'
   });
 
-  var containerDefinition = null;
-  var loggingDriver = null;
-  var logOptions = null;
+  var containerDefinition = null,
+      loggingDriver = null,
+      logOptions = null;
 
   // Generate a random string we will use to know when
   // the log stream is finished.
@@ -27,7 +27,7 @@ module.exports = function(options, cb) {
 
   async.waterfall([
     function(next) {
-      var ecs = new AWS.ECS();
+      let ecs = new AWS.ECS();
       ecs.describeTaskDefinition({ taskDefinition: options.taskDefinitionArn }, function(err, result) {
         if (err) return next(err);
 
@@ -73,7 +73,7 @@ module.exports = function(options, cb) {
       logStream: `${logOptions['awslogs-stream-prefix']}/${options.containerName}/${taskId}`,
       endOfStreamIdentifier: endOfStreamIdentifier
     });
-    
+
     var stream = combiner(logs, formatter);
     stream.logStream = logs;
 
