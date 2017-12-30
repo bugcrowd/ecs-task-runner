@@ -1,0 +1,17 @@
+{
+  "env": {
+    "es6": true,
+    "mocha": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "script"
+  },
+  "rules": {
+    "no-unused-vars": [ "error", { "argsIgnorePattern": "^_" } ],
+    "no-console": "off",
+    "strict": ["error", "global"]
+  }
+}
