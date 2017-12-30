@@ -15,8 +15,8 @@ module.exports = function(options, cb) {
   });
 
   var containerDefinition = null,
-      loggingDriver = null,
-      logOptions = null;
+      loggingDriver       = null,
+      logOptions          = null;
 
   // Generate a random string we will use to know when
   // the log stream is finished.
@@ -66,11 +66,11 @@ module.exports = function(options, cb) {
   ], function(err, taskDefinition) {
     if (err) return cb(err);
 
-    var taskArn = taskDefinition.tasks[0].taskArn;
-    var taskId = taskArn.substring(taskArn.lastIndexOf('/')+1);
+    const taskArn = taskDefinition.tasks[0].taskArn,
+          taskId  = taskArn.substring(taskArn.lastIndexOf('/')+1),
+          formatter = new FormatStream();
 
-    var formatter = new FormatStream();
-    var logs = new LogStream({
+    const logs = new LogStream({
       logGroup: logOptions['awslogs-group'],
       logStream: `${logOptions['awslogs-stream-prefix']}/${options.containerName}/${taskId}`,
       endOfStreamIdentifier: endOfStreamIdentifier
@@ -78,6 +78,20 @@ module.exports = function(options, cb) {
 
     var stream = combiner(logs, formatter);
     stream.logStream = logs;
+
+    process.on('SIGINT', () => {
+      console.log(`Received SIGINT. Asking ECS to stop task: ${taskId}`);
+
+      let params = {
+        clusterArn: options.clusterArn,
+        taskId: taskId,
+        reason: 'User cancelled tasked'
+      };
+
+      taskRunner.stop(params, () => {
+        logs.shutDown();
+      });
+    });
 
     cb(null, stream);
   });
