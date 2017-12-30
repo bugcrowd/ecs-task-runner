@@ -11,7 +11,7 @@ const async        = require('async'),
 
 module.exports = function(options, cb) {
   AWS.config.update({
-    region: options.region || process.env.AWS_DEFAULT_REGION || 'us-east-1'
+    region: process.env.AWS_DEFAULT_REGION || options.region
   });
 
   var containerDefinition = null,
