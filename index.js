@@ -27,7 +27,7 @@ module.exports = function(options, cb) {
 
   async.waterfall([
     function(next) {
-      let ecs = new AWS.ECS();
+      const ecs = new AWS.ECS();
       ecs.describeTaskDefinition({ taskDefinition: options.taskDefinitionArn }, function(err, result) {
         if (err) return next(err);
 
@@ -82,10 +82,10 @@ module.exports = function(options, cb) {
     process.on('SIGINT', () => {
       console.log(`Received SIGINT. Asking ECS to stop task: ${taskId}`);
 
-      let params = {
+      const params = {
         clusterArn: options.clusterArn,
         taskId: taskId,
-        reason: 'User cancelled tasked'
+        reason: 'User requested interrupt'
       };
 
       taskRunner.stop(params, () => {
