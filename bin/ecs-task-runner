@@ -79,5 +79,23 @@ ecsTaskRunner(options, function(err, stream) {
     process.exit(stream.logStream.exitCode);
   });
 
+  process.on('SIGINT', () => {
+    if (stream.taskRunner && stream.taskId) {
+      console.log(`Received SIGINT. Asking ECS to stop task: ${stream.taskId}`);
+
+      const params = {
+        clusterArn: options.clusterArn,
+        taskId: stream.taskId,
+        reason: 'User requested interrupt'
+      };
+
+      stream.taskRunner.stop(params, () => {
+        stream.logStream.shutDown();
+      });
+    } else {
+      process.exit(2);
+    }
+  });
+
   stream.pipe(process.stdout);
 });

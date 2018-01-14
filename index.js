@@ -78,20 +78,8 @@ module.exports = function(options, cb) {
 
     var stream = combiner(logs, formatter);
     stream.logStream = logs;
-
-    process.on('SIGINT', () => {
-      console.log(`Received SIGINT. Asking ECS to stop task: ${taskId}`);
-
-      const params = {
-        clusterArn: options.clusterArn,
-        taskId: taskId,
-        reason: 'User requested interrupt'
-      };
-
-      taskRunner.stop(params, () => {
-        logs.shutDown();
-      });
-    });
+    stream.taskRunner = taskRunner;
+    stream.taskId = taskId;
 
     cb(null, stream);
   });
