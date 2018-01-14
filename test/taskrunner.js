@@ -1,8 +1,8 @@
 'use strict'
 
-const AWS        = require('aws-sdk-mock'),
-      expect     = require('expect.js'),
-      taskRunner = require('../lib/taskrunner');
+const AWS        = require('aws-sdk-mock');
+const expect     = require('expect.js');
+const taskRunner = require('../lib/taskrunner');
 
 describe('TaskRunner', function() {
   it('should construct command', function() {
@@ -43,7 +43,7 @@ describe('TaskRunner', function() {
         cb(null, { taskArn: "Yo" });
       });
 
-      taskRunner.run(options, function(err, task) {
+      taskRunner.run(options, function(err, _task) {
         expect(err).to.equal(null);
         done();
       });
@@ -72,7 +72,7 @@ describe('TaskRunner', function() {
         cb(null, { taskArn: "Yo" });
       });
 
-      taskRunner.run(options, function(err, task) {
+      taskRunner.run(options, function(err, _task) {
         expect(err).to.equal(null);
         done();
       });
@@ -98,7 +98,7 @@ describe('TaskRunner', function() {
         cb(null, { taskArn: "Yo" });
       });
 
-      taskRunner.stop(options, function(err, task) {
+      taskRunner.stop(options, function(err, _task) {
         expect(err).to.equal(null);
         done();
       });

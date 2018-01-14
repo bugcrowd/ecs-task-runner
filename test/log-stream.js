@@ -1,8 +1,8 @@
 'use strict'
 
-const AWS        = require('aws-sdk-mock'),
-      expect     = require('expect.js'),
-      LogsStream = require('../lib/log-stream');
+const AWS        = require('aws-sdk-mock');
+const expect     = require('expect.js');
+const LogsStream = require('../lib/log-stream');
 
 describe('LogStream', function() {
   this.timeout(5000);
