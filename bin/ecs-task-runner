@@ -60,7 +60,6 @@ const options = {
 };
 
 ecsTaskRunner(options, function(err, stream) {
-  console.log('--> this is:', this);
   if (err) throw err;
 
   stream.on('error', (err) => {
