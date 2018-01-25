@@ -12,6 +12,7 @@
   "rules": {
     "no-unused-vars": [ "error", { "argsIgnorePattern": "^_" } ],
     "no-console": "off",
-    "strict": ["error", "global"]
+    "strict": ["error", "global"],
+    "one-var": ["error", { "var": "never", "let": "never", "const": "never" }]
   }
 }

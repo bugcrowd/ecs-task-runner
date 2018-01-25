@@ -1,22 +1,22 @@
 'use strict';
 
-const async        = require('async'),
-      randomstring = require('randomstring'),
-      _            = require('lodash'),
-      AWS          = require('aws-sdk'),
-      combiner     = require('stream-combiner'),
-      taskRunner   = require('./lib/taskrunner'),
-      LogStream    = require('./lib/log-stream'),
-      FormatStream = require('./lib/format-transform-stream');
+const _            = require('lodash');
+const async        = require('async');
+const AWS          = require('aws-sdk');
+const combiner     = require('stream-combiner');
+const FormatStream = require('./lib/format-transform-stream');
+const LogStream    = require('./lib/log-stream');
+const randomstring = require('randomstring');
+const taskRunner   = require('./lib/taskrunner');
 
 module.exports = function(options, cb) {
   AWS.config.update({
     region: process.env.AWS_DEFAULT_REGION || options.region
   });
 
-  var containerDefinition = null,
-      loggingDriver       = null,
-      logOptions          = null;
+  var containerDefinition = null;
+  var loggingDriver       = null;
+  var logOptions          = null;
 
   // Generate a random string we will use to know when
   // the log stream is finished.
@@ -66,9 +66,9 @@ module.exports = function(options, cb) {
   ], function(err, taskDefinition) {
     if (err) return cb(err);
 
-    const taskArn = taskDefinition.tasks[0].taskArn,
-          taskId  = taskArn.substring(taskArn.lastIndexOf('/')+1),
-          formatter = new FormatStream();
+    const taskArn = taskDefinition.tasks[0].taskArn;
+    const taskId  = taskArn.substring(taskArn.lastIndexOf('/')+1);
+    const formatter = new FormatStream();
 
     const logs = new LogStream({
       logGroup: logOptions['awslogs-group'],
@@ -78,20 +78,8 @@ module.exports = function(options, cb) {
 
     var stream = combiner(logs, formatter);
     stream.logStream = logs;
-
-    process.on('SIGINT', () => {
-      console.log(`Received SIGINT. Asking ECS to stop task: ${taskId}`);
-
-      const params = {
-        clusterArn: options.clusterArn,
-        taskId: taskId,
-        reason: 'User requested interrupt'
-      };
-
-      taskRunner.stop(params, () => {
-        logs.shutDown();
-      });
-    });
+    stream.taskRunner = taskRunner;
+    stream.taskId = taskId;
 
     cb(null, stream);
   });

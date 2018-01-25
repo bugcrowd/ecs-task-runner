@@ -1,8 +1,7 @@
 'use strict'
 
-const AWS                   = require('aws-sdk-mock'),
-      expect                = require('expect.js'),
-      FormatTransformStream = require('../lib/format-transform-stream');
+const expect                = require('expect.js');
+const FormatTransformStream = require('../lib/format-transform-stream');
 
 describe('FormatTransformStream', function() {
   it('should format logs from objects to strings', function(done) {
