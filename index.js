@@ -1,22 +1,22 @@
+'use strict';
 
-var async = require('async');
-var randomstring = require('randomstring');
-var _ = require('lodash');
-var AWS = require('aws-sdk');
-var combiner = require('stream-combiner');
-
-var taskRunner = require('./lib/taskrunner');
-var LogStream = require('./lib/log-stream');
-var FormatStream = require('./lib/format-transform-stream');
+const _            = require('lodash');
+const async        = require('async');
+const AWS          = require('aws-sdk');
+const combiner     = require('stream-combiner');
+const FormatStream = require('./lib/format-transform-stream');
+const LogStream    = require('./lib/log-stream');
+const randomstring = require('randomstring');
+const taskRunner   = require('./lib/taskrunner');
 
 module.exports = function(options, cb) {
   AWS.config.update({
-    region: process.env.AWS_DEFAULT_REGION || 'us-east-1'
+    region: process.env.AWS_DEFAULT_REGION || options.region
   });
 
   var containerDefinition = null;
-  var loggingDriver = null;
-  var logOptions = null;
+  var loggingDriver       = null;
+  var logOptions          = null;
 
   // Generate a random string we will use to know when
   // the log stream is finished.
@@ -27,7 +27,7 @@ module.exports = function(options, cb) {
 
   async.waterfall([
     function(next) {
-      var ecs = new AWS.ECS();
+      const ecs = new AWS.ECS();
       ecs.describeTaskDefinition({ taskDefinition: options.taskDefinitionArn }, function(err, result) {
         if (err) return next(err);
 
@@ -53,10 +53,12 @@ module.exports = function(options, cb) {
     function(next) {
       var params = {
         clusterArn: options.clusterArn,
-        taskDefinitionArn: options.taskDefinitionArn,
-        containerName: options.containerName,
         cmd: options.cmd,
-        endOfStreamIdentifier: endOfStreamIdentifier
+        containerName: options.containerName,
+        endOfStreamIdentifier: endOfStreamIdentifier,
+        env: options.env,
+        startedBy: options.startedBy,
+        taskDefinitionArn: options.taskDefinitionArn
       }
 
       taskRunner.run(params, next);
@@ -64,18 +66,20 @@ module.exports = function(options, cb) {
   ], function(err, taskDefinition) {
     if (err) return cb(err);
 
-    var taskArn = taskDefinition.tasks[0].taskArn;
-    var taskId = taskArn.substring(taskArn.lastIndexOf('/')+1);
+    const taskArn = taskDefinition.tasks[0].taskArn;
+    const taskId  = taskArn.substring(taskArn.lastIndexOf('/')+1);
+    const formatter = new FormatStream();
 
-    var formatter = new FormatStream();
-    var logs = new LogStream({
+    const logs = new LogStream({
       logGroup: logOptions['awslogs-group'],
       logStream: `${logOptions['awslogs-stream-prefix']}/${options.containerName}/${taskId}`,
       endOfStreamIdentifier: endOfStreamIdentifier
     });
-    
+
     var stream = combiner(logs, formatter);
     stream.logStream = logs;
+    stream.taskRunner = taskRunner;
+    stream.taskId = taskId;
 
     cb(null, stream);
   });

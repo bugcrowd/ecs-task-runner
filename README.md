@@ -12,7 +12,7 @@ As a module: `npm install ecs-task-runner --save`
 Usage
 -----
 
-ECS Task Runner requires an already existing ECS cluster and Task Definition. The Task Definition must send it's logs to AWS Cloudwatch and the ECS hosts will need an IAM role that has permission to do that.
+ECS Task Runner requires an already existing ECS cluster and Task Definition. The Task Definition must send it's logs to AWS Cloudwatch (using awslogs-stream-prefix) and the ECS hosts will need an IAM role that has permission to do that.
 
 ### CLI Tool
 
@@ -22,6 +22,9 @@ Options:
   --task-definition                                                   [required]
   --container-name                                                    [required]
   --cmd                                                               [required]
+  --started-by
+  --env
+  --region                                                  (default: us-east-1)
 ```
 
 #### cluster
@@ -35,6 +38,18 @@ The name of your container in your Task Definition that you want to run this com
 
 #### cmd
 The command you want to run
+
+#### started-by
+If provided, this will show up as startedBy in your ECS console
+
+#### env
+This option is a key/value pair defined as `key=value` and can be repeated multiple times. Each
+pair is passed as an environment variable to the container, where `key` is the name of the env var
+and `value` is it's value.
+
+#### region
+The AWS region used when accessing ECS and CloudWatch. If nothing is provided falls back to `us-east-1`.
+The `AWS_DEFAULT_REGION` environment variable has precendence over this setting.
 
 ### Example Module Usage
 
