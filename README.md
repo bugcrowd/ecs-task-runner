@@ -6,8 +6,10 @@ Run a task on ECS and receive output by sending task logs to Cloudwatch Logs and
 Installation
 ------------
 
-For cli usage: `npm install -g ecs-task-runner`
-As a module: `npm install ecs-task-runner --save`
+**NOTE:** We have moved the package under our `bugcrowd` NPM organization - this will be the only package location maintained going forward.
+
+- For cli usage: `npm install -g @bugcrowd/ecs-task-runner`
+- As a module: `npm install @bugcrowd/ecs-task-runner --save`
 
 Usage
 -----
