@@ -55,6 +55,7 @@ module.exports = function(options, cb) {
         clusterArn: options.clusterArn,
         cmd: options.cmd,
         containerName: options.containerName,
+        endOfStreamIdentifier: endOfStreamIdentifier,
         env: options.env,
         startedBy: options.startedBy,
         taskDefinitionArn: options.taskDefinitionArn,
