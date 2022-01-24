@@ -55,10 +55,12 @@ module.exports = function(options, cb) {
         clusterArn: options.clusterArn,
         cmd: options.cmd,
         containerName: options.containerName,
-        endOfStreamIdentifier: endOfStreamIdentifier,
         env: options.env,
         startedBy: options.startedBy,
-        taskDefinitionArn: options.taskDefinitionArn
+        taskDefinitionArn: options.taskDefinitionArn,
+        fargate: options.fargate,
+        subnets: options.subnets,
+        securityGroups: options.securityGroups
       }
 
       taskRunner.run(params, next);

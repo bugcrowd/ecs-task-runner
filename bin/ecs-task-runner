@@ -45,6 +45,23 @@ const argv = yargs
     default: 'us-east-1',
     describe: 'The region used when talking to ECS and CloudWatch'
   })
+  .option('fargate', {
+    alias: 'f',
+    describe: 'Sets the launchtype to FARGATE',
+    implies: ['subnets', 'security-groups'],
+    type: 'boolean'
+  })
+  .option('subnets', {
+    alias: 's',
+    describe: 'Subnets network configuration',
+    type: 'array'
+
+  })
+  .option('security-groups', {
+    alias: 'g',
+    describe: 'Security groups network configuration',
+    type: 'array'
+  })
   .help()
   .wrap(yargs.terminalWidth())
   .argv;
@@ -56,7 +73,10 @@ const options = {
   cmd: argv.cmd,
   region: argv.region,
   startedBy: argv.startedBy,
-  env: argv.env
+  env: argv.env,
+  fargate: argv.fargate,
+  subnets: argv.subnets,
+  securityGroups: argv.securityGroups
 };
 
 ecsTaskRunner(options, function(err, stream) {

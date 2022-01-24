@@ -26,6 +26,9 @@ Options:
   --cmd                                                               [required]
   --started-by
   --env
+  --fargate
+  --subnets
+  --security-groups
   --region                                                  (default: us-east-1)
 ```
 
@@ -48,6 +51,13 @@ If provided, this will show up as startedBy in your ECS console
 This option is a key/value pair defined as `key=value` and can be repeated multiple times. Each
 pair is passed as an environment variable to the container, where `key` is the name of the env var
 and `value` is it's value.
+#### fargate
+If provided sets launchType of the taks to FARGATE. This implies awsvpc networking and requires you to 
+set subnets and security-groups.
+#### subnets
+Array of subnets to configure.
+#### security-groups
+Array of security-groups.
 
 #### region
 The AWS region used when accessing ECS and CloudWatch. If nothing is provided falls back to `us-east-1`.
