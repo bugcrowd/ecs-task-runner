@@ -59,7 +59,8 @@ module.exports = function(options, cb) {
         env: options.env,
         startedBy: options.startedBy,
         taskDefinitionArn: options.taskDefinitionArn,
-        fargate: options.fargate,
+        launchType: options.launchType,
+        assignPublicIp: options.assignPublicIp,
         subnets: options.subnets,
         securityGroups: options.securityGroups
       }

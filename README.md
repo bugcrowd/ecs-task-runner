@@ -26,7 +26,8 @@ Options:
   --cmd                                                               [required]
   --started-by
   --env
-  --fargate
+  --launch-type
+  --assign-public-ip
   --subnets
   --security-groups
   --region                                                  (default: us-east-1)
@@ -51,11 +52,21 @@ If provided, this will show up as startedBy in your ECS console
 This option is a key/value pair defined as `key=value` and can be repeated multiple times. Each
 pair is passed as an environment variable to the container, where `key` is the name of the env var
 and `value` is it's value.
-#### fargate
+
+#### launch-type
 If provided sets launchType of the taks to FARGATE. This implies awsvpc networking and requires you to 
 set subnets and security-groups.
+
+### Network configuration
+When awsvpc networking mode is configured for the task this requires the awsvpc configuration to
+be specified when executing a taks. The following options can be used to do so. Subnets and security groups
+are required options in this case.
+
+#### assign-public-ip
+Boolean whether to assign a public ip to the task.
 #### subnets
 Array of subnets to configure.
+
 #### security-groups
 Array of security-groups.
 
