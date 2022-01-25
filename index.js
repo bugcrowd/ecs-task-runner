@@ -46,6 +46,10 @@ module.exports = function(options, cb) {
           return next(new Error('Logging dirver is awslogs. Can not stream logs unless logging driver is awslogs'));
         }
 
+        if (result.taskDefinition.networkMode === 'awsvpc' && (options.subnets === undefined || options.securityGroups === undefined)) {
+          return next(new Error('Taskdefinition networkMode is awsvpc, this requires you to specify subnets and securityGroups.'));
+        }
+
         logOptions = containerDefinition['logConfiguration']['options'];
         next();
       });
