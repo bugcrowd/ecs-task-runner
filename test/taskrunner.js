@@ -14,8 +14,8 @@ describe('TaskRunner', function() {
     var cmd = taskRunner.makeCmd(options);
 
     expect(cmd).to.eql([
-      'bash', '-c',
-      `bash -c "${options.cmd}"; EXITCODE=$?; echo "TASK FINISHED: $(echo -n ${options.endOfStreamIdentifier} | base64), EXITCODE: $EXITCODE"`
+      'sh', '-c',
+      `sh -c "${options.cmd}"; EXITCODE=$?; echo "TASK FINISHED: $(echo -n ${options.endOfStreamIdentifier} | base64), EXITCODE: $EXITCODE"`
     ]);
   })
 
