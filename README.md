@@ -54,8 +54,8 @@ pair is passed as an environment variable to the container, where `key` is the n
 and `value` is it's value.
 
 #### launch-type
-If provided sets launchType of the taks to FARGATE. This implies awsvpc networking and requires you to 
-set subnets and security-groups.
+Specify the launchType for the task to be run. Valid options are EC2, FARGATE and EXTERNAL.
+Default: EC2
 
 ### Network configuration
 When awsvpc networking mode is configured for the task this requires the awsvpc configuration to
