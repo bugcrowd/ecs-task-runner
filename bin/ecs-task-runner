@@ -47,8 +47,8 @@ const argv = yargs
   })
   .option('launch-type', {
     describe: 'Define the desired launchtype',
-    default: 'ECS',
-    options: ['FARGATE', 'ECS', 'EXTERNAL'],
+    default: 'EC2',
+    options: ['FARGATE', 'EC2', 'EXTERNAL'],
     type: 'string'
   })
   .option('assign-public-ip', {
