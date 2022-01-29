@@ -64,6 +64,7 @@ are required options in this case.
 
 #### assign-public-ip
 Boolean whether to assign a public ip to the task.
+
 #### subnets
 Array of subnets to configure.
 
