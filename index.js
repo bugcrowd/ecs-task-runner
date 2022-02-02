@@ -46,6 +46,17 @@ module.exports = function(options, cb) {
           return next(new Error('Logging dirver is awslogs. Can not stream logs unless logging driver is awslogs'));
         }
 
+        if (result.taskDefinition.networkMode === 'awsvpc') {
+          if (options.subnets === undefined || options.securityGroups === undefined) {
+            return next(new Error('Task definition networkMode is awsvpc, this requires you to specify subnets and security-groups.'));
+          }
+        }
+        else{
+          if (options.subnets !== undefined || options.securityGroups !== undefined || options.assignPublicIp) {
+            return next(new Error('Network options are only allowed when task definition networkMode is awsvpc. You should not specify subnets, security-groups or assign-public-ip'));
+          }
+        }
+
         logOptions = containerDefinition['logConfiguration']['options'];
         next();
       });
@@ -58,7 +69,11 @@ module.exports = function(options, cb) {
         endOfStreamIdentifier: endOfStreamIdentifier,
         env: options.env,
         startedBy: options.startedBy,
-        taskDefinitionArn: options.taskDefinitionArn
+        taskDefinitionArn: options.taskDefinitionArn,
+        launchType: options.launchType,
+        assignPublicIp: options.assignPublicIp,
+        subnets: options.subnets,
+        securityGroups: options.securityGroups
       }
 
       taskRunner.run(params, next);

@@ -45,6 +45,24 @@ const argv = yargs
     default: 'us-east-1',
     describe: 'The region used when talking to ECS and CloudWatch'
   })
+  .option('launch-type', {
+    describe: 'Define the desired launchtype',
+    default: 'EC2',
+    options: ['FARGATE', 'EC2', 'EXTERNAL'],
+    type: 'string'
+  })
+  .option('assign-public-ip', {
+    describe: 'Assign the task a public ip (awsvpc configuration)',
+    type: 'boolean'
+  })
+  .option('subnets', {
+    describe: 'Subnets network configuration (awsvpc configuration)',
+    type: 'array'
+  })
+  .option('security-groups', {
+    describe: 'Security groups network configuration (awsvpc configuration)',
+    type: 'array'
+  })
   .help()
   .wrap(yargs.terminalWidth())
   .argv;
@@ -56,7 +74,11 @@ const options = {
   cmd: argv.cmd,
   region: argv.region,
   startedBy: argv.startedBy,
-  env: argv.env
+  env: argv.env,
+  launchType: argv.launchType,
+  assignPublicIp: argv.assignPublicIp,
+  subnets: argv.subnets,
+  securityGroups: argv.securityGroups
 };
 
 ecsTaskRunner(options, function(err, stream) {

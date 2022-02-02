@@ -26,6 +26,10 @@ Options:
   --cmd                                                               [required]
   --started-by
   --env
+  --launch-type
+  --assign-public-ip
+  --subnets
+  --security-groups
   --region                                                  (default: us-east-1)
 ```
 
@@ -48,6 +52,24 @@ If provided, this will show up as startedBy in your ECS console
 This option is a key/value pair defined as `key=value` and can be repeated multiple times. Each
 pair is passed as an environment variable to the container, where `key` is the name of the env var
 and `value` is it's value.
+
+#### launch-type
+Specify the launchType for the task to be run. Valid options are EC2, FARGATE and EXTERNAL.
+Default: EC2
+
+### Network configuration
+When awsvpc networking mode is configured for the task this requires the awsvpc configuration to
+be specified when executing a taks. The following options can be used to do so. Subnets and security groups
+are required options in this case.
+
+#### assign-public-ip
+Boolean whether to assign a public ip to the task.
+
+#### subnets
+Array of subnets to configure.
+
+#### security-groups
+Array of security-groups.
 
 #### region
 The AWS region used when accessing ECS and CloudWatch. If nothing is provided falls back to `us-east-1`.
