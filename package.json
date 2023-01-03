@@ -40,7 +40,7 @@
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
     "expect.js": "^0.3.1",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "sinon": "^5.1.1"
   },
   "preferGlobal": true
