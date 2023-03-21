@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 'use strict'
 
-const _             = require('lodash'),
-      async         = require('async'),
-      ecsTaskRunner = require('../'),
-      colors        = require('colors'),
-      yargs         = require('yargs');
+const
+  ecsTaskRunner = require('../'),
+  yargs = require('yargs');
 
 const argv = yargs
   .option('cluster', {
@@ -34,8 +32,8 @@ const argv = yargs
     array: true,
     describe: 'key=value   Pass an additional environment variable to the container',
     coerce: opts => {
-      return _.map(opts, item => {
-        let pieces = _.split(item, '=', 2);
+      return opts.map(item => {
+        let pieces = item.split('=');
         return { name: pieces[0], value: pieces[1] };
       })
     }
@@ -81,7 +79,7 @@ const options = {
   securityGroups: argv.securityGroups
 };
 
-ecsTaskRunner(options, function(err, stream) {
+ecsTaskRunner(options, function (err, stream) {
   if (err) throw err;
 
   stream.on('error', (err) => {
