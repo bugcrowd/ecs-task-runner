@@ -1,0 +1,13 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "09:00"
+    timezone: Australia/Sydney
+  pull-request-branch-name:
+    separator: "-"
+  open-pull-requests-limit: 5
+  labels:
+    - dependencies
