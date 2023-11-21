@@ -78,9 +78,9 @@ The `AWS_DEFAULT_REGION` environment variable has precendence over this setting.
 ### Example Module Usage
 
 ```
-var ecsTaskRunner = require('ecs-task-runner');
+const ecsTaskRunner = require('ecs-task-runner');
 
-var options = {
+const options = {
   clusterArn: 'xxx',
   taskDefinitionArn: 'xxx',
   containerName: 'xxx',
