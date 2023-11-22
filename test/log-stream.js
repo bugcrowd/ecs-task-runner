@@ -1,11 +1,14 @@
 'use strict'
 
-const AWS        = require('aws-sdk-mock');
-const expect     = require('expect.js');
+const { mockClient } = require('aws-sdk-client-mock');
+const { CloudWatchLogs, GetLogEventsCommand } = require("@aws-sdk/client-cloudwatch-logs");
+const expect = require('expect.js');
 const LogsStream = require('../lib/log-stream');
 
-describe('LogStream', function() {
+describe('LogStream', function () {
   this.timeout(5000);
+  const cwlMock = mockClient(CloudWatchLogs);
+  afterEach(() => { cwlMock.reset(); });
 
   const options = {
     logGroup: 'yee',
@@ -16,26 +19,27 @@ describe('LogStream', function() {
   const staticLogs = [
     { timestamp: 1477346285562, message: 'Weee logs' },
     { timestamp: 1477346285563, message: 'more logs' },
-    { timestamp: 1477346285565, message: `TASK FINISHED: ${new Buffer(options.endOfStreamIdentifier).toString('base64')}, EXITCODE: 44` }
+    { timestamp: 1477346285565, message: `TASK FINISHED: ${Buffer.from(options.endOfStreamIdentifier).toString('base64')}, EXITCODE: 44` }
   ];
 
-  it('should fetch logs from AWS Cloudwatch ', function(done) {
-    let fetch_count = 0;
-
-    AWS.mock('CloudWatchLogs', 'getLogEvents', function (params, cb){
+  it('should fetch logs from AWS Cloudwatch ', function (done) {
+    let invocationCount = 0;
+    cwlMock.on(GetLogEventsCommand).callsFake((params) => {
       expect(params.logGroupName).to.equal(options.logGroup);
       expect(params.logStreamName).to.equal(options.logStream);
 
-      const res = {
-        events: [ staticLogs[fetch_count] ]
-      };
+      const response = { events: [staticLogs[invocationCount]] };
+      invocationCount++;
 
-      fetch_count++;
-      setTimeout(() => cb(null, res), 200);
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(response)
+        }, 200);
+      });
     });
 
     const stream = new LogsStream(options);
-    var logsCollection = [];
+    let logsCollection = [];
 
     stream.on('data', (data) => {
       logsCollection.push(data);
@@ -46,9 +50,5 @@ describe('LogStream', function() {
       expect(stream.exitCode).to.eql(44);
       done();
     });
-  });
-
-  after(function() {
-    AWS.restore('CloudWatchLogs', 'getLogEvents');
   });
 });

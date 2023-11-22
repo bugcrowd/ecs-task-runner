@@ -1,22 +1,20 @@
 'use strict';
 
-const _            = require('lodash');
-const async        = require('async');
-const AWS          = require('aws-sdk');
-const combiner     = require('stream-combiner');
+const _ = require('lodash');
+const async = require('async');
+const { ECS } = require("@aws-sdk/client-ecs");
+const combiner = require('stream-combiner');
 const FormatStream = require('./lib/format-transform-stream');
-const LogStream    = require('./lib/log-stream');
+const LogStream = require('./lib/log-stream');
 const randomstring = require('randomstring');
-const taskRunner   = require('./lib/taskrunner');
+const taskRunner = require('./lib/taskrunner');
 
-module.exports = function(options, cb) {
-  AWS.config.update({
-    region: process.env.AWS_DEFAULT_REGION || options.region
-  });
+module.exports = function (options, cb) {
+  const region = process.env.AWS_DEFAULT_REGION || options.region
 
-  var containerDefinition = null;
-  var loggingDriver       = null;
-  var logOptions          = null;
+  let containerDefinition = null;
+  let loggingDriver = null;
+  let logOptions = null;
 
   // Generate a random string we will use to know when
   // the log stream is finished.
@@ -26,9 +24,9 @@ module.exports = function(options, cb) {
   });
 
   async.waterfall([
-    function(next) {
-      const ecs = new AWS.ECS();
-      ecs.describeTaskDefinition({ taskDefinition: options.taskDefinitionArn }, function(err, result) {
+    function (next) {
+      const ecs = new ECS({ region: region });
+      ecs.describeTaskDefinition({ taskDefinition: options.taskDefinitionArn }, function (err, result) {
         if (err) return next(err);
 
         if (!result.taskDefinition || !result.taskDefinition.taskDefinitionArn) {
@@ -51,7 +49,7 @@ module.exports = function(options, cb) {
             return next(new Error('Task definition networkMode is awsvpc, this requires you to specify subnets and security-groups.'));
           }
         }
-        else{
+        else {
           if (options.subnets !== undefined || options.securityGroups !== undefined || options.assignPublicIp) {
             return next(new Error('Network options are only allowed when task definition networkMode is awsvpc. You should not specify subnets, security-groups or assign-public-ip'));
           }
@@ -61,8 +59,8 @@ module.exports = function(options, cb) {
         next();
       });
     },
-    function(next) {
-      var params = {
+    function (next) {
+      const params = {
         clusterArn: options.clusterArn,
         cmd: options.cmd,
         containerName: options.containerName,
@@ -78,11 +76,11 @@ module.exports = function(options, cb) {
 
       taskRunner.run(params, next);
     }
-  ], function(err, taskDefinition) {
+  ], function (err, taskDefinition) {
     if (err) return cb(err);
 
     const taskArn = taskDefinition.tasks[0].taskArn;
-    const taskId  = taskArn.substring(taskArn.lastIndexOf('/')+1);
+    const taskId = taskArn.substring(taskArn.lastIndexOf('/') + 1);
     const formatter = new FormatStream();
 
     const logs = new LogStream({
@@ -91,7 +89,7 @@ module.exports = function(options, cb) {
       endOfStreamIdentifier: endOfStreamIdentifier
     });
 
-    var stream = combiner(logs, formatter);
+    const stream = combiner(logs, formatter);
     stream.logStream = logs;
     stream.taskRunner = taskRunner;
     stream.taskId = taskId;
