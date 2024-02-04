@@ -41,7 +41,7 @@
     "eslint-plugin-standard": "^5.0.0",
     "expect.js": "^0.3.1",
     "mocha": "^10.2.0",
-    "sinon": "^5.1.1"
+    "sinon": "^17.0.1"
   },
   "preferGlobal": true
 }
