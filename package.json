@@ -10,7 +10,7 @@
     "ecs-task-runner": "./bin/ecs-task-runner"
   },
   "scripts": {
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha --parallel --recursive"
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha --recursive"
   },
   "repository": {
     "type": "git",

@@ -8,11 +8,11 @@ const { promisify } = require('node:util');
 const index = promisify(require('../index'));
 
 describe('index', function () {
-  const cwlMock = mockClient(CloudWatchLogs);
-  const ecsMock = mockClient(ECS);
-  afterEach(() => {
-    cwlMock.reset();
-    ecsMock.reset();
+  let cwlMock;
+  let ecsMock;
+  beforeEach(() => {
+    cwlMock = mockClient(CloudWatchLogs);
+    ecsMock = mockClient(ECS);
   });
 
   it('should do the thing', async function () {
@@ -46,6 +46,7 @@ describe('index', function () {
     ecsMock.on(RunTaskCommand).callsFake(async params => {
       expect(params.taskDefinition).to.eql(options.taskDefinitionArn)
 
+      // Grab the `xxx` from ..."TASK FINISHED: $(echo -n xxx | base64),"...
       eofSet(params.overrides.containerOverrides[0].command[2].split(' ')[9])
 
       return {

@@ -1,6 +1,6 @@
 'use strict'
 
-const expect                = require('expect.js');
+const expect = require('expect.js');
 const FormatTransformStream = require('../lib/format-transform-stream');
 
 describe('FormatTransformStream', function() {
