@@ -75,6 +75,8 @@ module.exports = function (options, cb) {
     })
     .then((taskDefinition) => {
       if (taskDefinition.failures) {
+        console.error("Task failed to launch:")
+        console.error(JSON.stringify(taskDefinition.failures))
         throw new Error("ECS RunTask returned failure messages", { cause: taskDefinition.failures });
       }
 
