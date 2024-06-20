@@ -74,7 +74,7 @@ module.exports = function (options, cb) {
       return taskRunner.runPromisified(params);
     })
     .then((taskDefinition) => {
-      if (taskDefinition.failures) {
+      if (taskDefinition.failures && taskDefinition.failures.length > 0) {
         throw new Error("ECS RunTask returned failure messages", { cause: taskDefinition.failures });
       }
 
