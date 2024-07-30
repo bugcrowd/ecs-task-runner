@@ -1,7 +1,7 @@
 'use strict'
 
 const { mockClient } = require('aws-sdk-client-mock');
-const { ECS, StartTaskCommand, StopTaskCommand, RunTaskCommand } = require("@aws-sdk/client-ecs");
+const { ECS, StopTaskCommand, RunTaskCommand } = require("@aws-sdk/client-ecs");
 const expect = require('expect.js');
 const taskRunner = require('../lib/taskrunner');
 
@@ -21,8 +21,10 @@ describe('TaskRunner', function () {
   })
 
   describe('#run', function () {
-    const ecsMock = mockClient(ECS);
-    afterEach(() => { ecsMock.reset(); });
+    let ecsMock;
+    beforeEach(() => {
+      ecsMock = mockClient(ECS);
+    });
 
     it('should make a call to AWS.ECS with correct arguments not including env', function (done) {
       const options = {
@@ -83,7 +85,7 @@ describe('TaskRunner', function () {
 
   describe('#stop', function () {
     const ecsMock = mockClient(ECS);
-    afterEach(() => { ecsMock.reset(); });
+    beforeEach(() => { ecsMock.reset(); });
 
     it('should make a call to AWS.ECS with correct arguments', function (done) {
       const options = {
