@@ -7,8 +7,10 @@ const LogsStream = require('../lib/log-stream');
 
 describe('LogStream', function () {
   this.timeout(5000);
-  const cwlMock = mockClient(CloudWatchLogs);
-  afterEach(() => { cwlMock.reset(); });
+  let cwlMock ;
+  beforeEach(() => {
+    cwlMock = mockClient(CloudWatchLogs);
+  });
 
   const options = {
     logGroup: 'yee',

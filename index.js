@@ -74,6 +74,10 @@ module.exports = function (options, cb) {
       return taskRunner.runPromisified(params);
     })
     .then((taskDefinition) => {
+      if (taskDefinition.failures && taskDefinition.failures.length > 0) {
+        throw new Error("ECS RunTask returned failure messages", { cause: taskDefinition.failures });
+      }
+
       const taskArn = taskDefinition.tasks[0].taskArn;
       const taskId = taskArn.substring(taskArn.lastIndexOf('/') + 1);
       const formatter = new FormatStream();
