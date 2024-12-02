@@ -85,7 +85,9 @@ module.exports = function (options, cb) {
       const logs = new LogStream({
         logGroup: logOptions['awslogs-group'],
         logStream: `${logOptions['awslogs-stream-prefix']}/${options.containerName}/${taskId}`,
-        endOfStreamIdentifier: endOfStreamIdentifier
+        endOfStreamIdentifier: endOfStreamIdentifier,
+        durationBetweenPolls: options.durationBetweenPolls,
+        timeoutBeforeFirstLogs: options.timeoutBeforeFirstLogs
       });
 
       const stream = combiner(logs, formatter);
