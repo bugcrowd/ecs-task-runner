@@ -75,6 +75,9 @@ Array of security-groups.
 The AWS region used when accessing ECS and CloudWatch. If nothing is provided falls back to `us-east-1`.
 The `AWS_DEFAULT_REGION` environment variable has precendence over this setting.
 
+#### tag
+This option is a key/value pair defined as `key=value` and can be repeated multiple times. Each pair is passed as a tag of the launched task, where `key` is the name of the tag and `value` is it's value.
+
 ### Example Module Usage
 
 ```
