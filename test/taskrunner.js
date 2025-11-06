@@ -38,7 +38,7 @@ describe('TaskRunner', function () {
       ecsMock.on(RunTaskCommand).callsFake((params) => {
         expect(params.cluster).to.equal(options.clusterArn);
         expect(params.taskDefinition).to.equal(options.taskDefinitionArn);
-
+        
         const cmdOverride = params.overrides.containerOverrides[0];
         expect(cmdOverride.name).to.equal(options.containerName);
         expect(cmdOverride.command).to.eql(taskRunner.makeCmd(options));
@@ -81,6 +81,37 @@ describe('TaskRunner', function () {
         done();
       });
     });
+
+    it('should make a call to AWS.ECS with correct arguments including tags', function (done) {
+      const options = {
+        clusterArn: 'cluster.arn',
+        taskDefinitionArn: 'task-definition.arn',
+        containerName: 'container name',
+        cmd: 'mycommand --arg "Woot"',
+        endOfStreamIdentifier: '1234',
+        startedBy: 'Bugs Bunny',
+        tags: [{ key: 'task', value: 'cleanup' }, { key: 'database', value: 'abc' }]
+      };
+
+      ecsMock.on(RunTaskCommand).callsFake((params) => {
+        expect(params.cluster).to.equal(options.clusterArn);
+        expect(params.taskDefinition).to.equal(options.taskDefinitionArn);
+        expect(params.startedBy).to.equal(options.startedBy);
+        expect(params.tags).to.equal(options.tags);
+
+        const cmdOverride = params.overrides.containerOverrides[0];
+        expect(cmdOverride.name).to.equal(options.containerName);
+        expect(cmdOverride.command).to.eql(taskRunner.makeCmd(options));
+
+        return Promise.resolve({ taskArn: "Yo" });
+      });
+
+      taskRunner.run(options, function (err, _task) {
+        expect(err).to.equal(null);
+        done();
+      });
+    });
+
   });
 
   describe('#stop', function () {
