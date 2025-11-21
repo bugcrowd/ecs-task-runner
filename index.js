@@ -67,7 +67,8 @@ module.exports = function (options, cb) {
         launchType: options.launchType,
         assignPublicIp: options.assignPublicIp,
         subnets: options.subnets,
-        securityGroups: options.securityGroups
+        securityGroups: options.securityGroups,
+        tags: options.tags
       };
 
       taskRunner.runPromisified = util.promisify(taskRunner.run);
