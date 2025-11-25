@@ -61,6 +61,16 @@ const argv = yargs
     describe: 'Security groups network configuration (awsvpc configuration)',
     type: 'array'
   })
+  .option('tag', {
+    array: true,
+    describe: 'key=value   Pass tag to add to the task',
+    coerce: opts => {
+      return opts.map(item => {
+        let pieces = item.split('=');
+        return { key: pieces[0], value: pieces[1] };
+      })
+    }
+  })
   .help()
   .wrap(yargs.terminalWidth())
   .argv;
@@ -76,7 +86,8 @@ const options = {
   launchType: argv.launchType,
   assignPublicIp: argv.assignPublicIp,
   subnets: argv.subnets,
-  securityGroups: argv.securityGroups
+  securityGroups: argv.securityGroups,
+  tags: argv.tag
 };
 
 ecsTaskRunner(options, function (err, stream) {
