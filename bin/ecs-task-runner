@@ -61,6 +61,16 @@ const argv = yargs
     describe: 'Security groups network configuration (awsvpc configuration)',
     type: 'array'
   })
+  .option('duration-between-polls', {
+    describe: 'Duration between logs polls',
+    type: 'number',
+    default: 1000
+  })
+  .option('timeout-before-first-logs', {
+    describe: 'Timeout before first logs',
+    type: 'number',
+    default: 300 * 1000
+  })
   .help()
   .wrap(yargs.terminalWidth())
   .argv;
