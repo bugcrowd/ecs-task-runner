@@ -29,7 +29,7 @@
     "@aws-sdk/client-ecs": "^3.451.0",
     "randomstring": "^1.1.5",
     "stream-combiner": "^0.2.2",
-    "yargs": "^17.7.1"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "aws-sdk-client-mock": "^4.0.1",
